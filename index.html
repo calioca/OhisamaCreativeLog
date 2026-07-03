@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sunny Creative Log</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #fff3bf;
+      color: #595651;
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #fffdf6;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 6px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #f2d878;
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 70px;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #f2ca50;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover{
+      background:#f2b905;
+    }
+
+    .summary {
+      margin-top: 24px;
+      padding: 16px;
+      background: #fff0ad;
+      border-radius: 16px;
+    }
+
+    .log {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid #f2d878;
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .log-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .log-meta {
+      margin-top: 6px;
+      color: #595651;
+      font-size: 0.9rem;
+    }
+
+    .delete-btn {
+      background: #ccc;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>☀️ Sunny Creative Log</h1>
+    <p>創ることを、少しずつ積み重ねる。</p>
+
+    <label>日付</label>
+    <input type="date" id="date" />
+
+    <label>種別</label>
+    <select id="platform">
+      <option value="note">note</option>
+      <option value="しずかなインターネット">しずかなインターネット</option>
+      <option value="その他">その他</option>
+    </select>
+
+    <label>タイトル</label>
+    <input type="text" id="title" placeholder="例：今月の振り返り" />
+
+    <label>作業</label>
+    <select id="workType">
+      <option value="新規">新規</option>
+      <option value="続き">続き</option>
+      <option value="推敲">推敲</option>
+      <option value="構成">構成</option>
+      <option value="公開">公開</option>
+    </select>
+
+    <label>文字数</label>
+    <input type="number" id="chars" placeholder="空欄でもOK" />
+
+    <label>メモ</label>
+    <textarea id="memo" placeholder="例：コメダで書き上げた"></textarea>
+
+    <button onclick="addLog()">記録する</button>
+
+    <div class="summary" id="summary"></div>
+
+    <h2>ログ一覧</h2>
+    <div id="logs"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "sousakuLogs";
+
+    const dateInput = document.getElementById("date");
+    const today = new Date().toISOString().slice(0, 10);
+    dateInput.value = today;
+
+    function getLogs() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    }
+
+    function saveLogs(logs) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+    }
+
+    function addLog() {
+      const log = {
+        id: Date.now(),
+        date: document.getElementById("date").value,
+        platform: document.getElementById("platform").value,
+        title: document.getElementById("title").value || "無題",
+        workType: document.getElementById("workType").value,
+        chars: Number(document.getElementById("chars").value) || 0,
+        memo: document.getElementById("memo").value
+      };
+
+      const logs = getLogs();
+      logs.push(log);
+      saveLogs(logs);
+
+      document.getElementById("title").value = "";
+      document.getElementById("chars").value = "";
+      document.getElementById("memo").value = "";
+
+      render();
+    }
+
+    function deleteLog(id) {
+      const logs = getLogs().filter(log => log.id !== id);
+      saveLogs(logs);
+      render();
+    }
+
+    function render() {
+      const logs = getLogs().sort((a, b) => b.date.localeCompare(a.date));
+
+      const todayLogs = logs.filter(log => log.date === today);
+
+      const todayTotal = todayLogs.reduce((sum, log) => sum + log.chars, 0);
+      const noteTotal = todayLogs
+        .filter(log => log.platform === "note")
+        .reduce((sum, log) => sum + log.chars, 0);
+      const shizukanaTotal = todayLogs
+        .filter(log => log.platform === "しずかなインターネット")
+        .reduce((sum, log) => sum + log.chars, 0);
+
+      document.getElementById("summary").innerHTML = `
+        <strong>🌞今日の創作</strong><br>
+        合計：${todayTotal}字 / ${todayLogs.length}件<br>
+        note：${noteTotal}字<br>
+        しずかなインターネット：${shizukanaTotal}字
+      `;
+
+      document.getElementById("logs").innerHTML = logs.map(log => `
+        <div class="log">
+          <div class="log-title">${log.title}</div>
+          <div class="log-meta">
+            ${log.date} / ${log.platform} / ${log.workType} / ${log.chars}字
+          </div>
+          ${log.memo ? `<p>${log.memo}</p>` : ""}
+          <button class="delete-btn" onclick="deleteLog(${log.id})">削除</button>
+        </div>
+      `).join("");
+    }
+
+    render();
+  </script>
+</body>
+</html>
