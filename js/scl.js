@@ -22,22 +22,35 @@
   }
 
   function addLog() {
-    const title = document.getElementById("title").value || "無題";
+    const newTitle = document
+       .getElementById("newTitle")
+       .value
+       .trim();
+    if (newTitle === "") {
+      // 新しい作品は作らない
+    }
     const platform = document.getElementById("platform").value;
+    const selectedWorkId = document.getElementById("workSelect").value;
 
     const works = getWorks();
+    let work;
 
-    let work = works.find(w => w.title === title && w.platform === platform);
-
-    if (!work) {
+    if (newTitle) {
       work = {
         id: Date.now(),
-        title: title,
+        title: newTitle,
         platform: platform,
         createdAt: document.getElementById("date").value
       };
       works.push(work);
       saveWorks(works);
+    } else {
+      work = works.find(w => String(w.id) === selectedWorkId);
+    }
+
+    if (!work) {
+      alert("作品を選ぶか、新しい作品名を入力してください。");
+      return;
     }
 
     const log = {
@@ -53,7 +66,7 @@
     logs.push(log);
     saveLogs(logs);
 
-    document.getElementById("title").value = "";
+    document.getElementById("newTitle").value = "";
     document.getElementById("chars").value = "";
     document.getElementById("memo").value = "";
 
@@ -64,6 +77,25 @@
     const logs = getLogs().filter(log => log.id !== id);
     saveLogs(logs);
     render();
+  }
+  
+  function renderWorkOptions() {
+    const works = getWorks();
+    const workSelect = document.getElementById("workSelect");
+
+    if (!workSelect) return;
+
+    if (works.length === 0) {
+      workSelect.innerHTML =
+        `<option value="">まだ作品がありません</option>`;
+      return;
+    }
+
+    workSelect.innerHTML = works.map(work => `
+      <option value="${work.id}">
+        ${work.platform}：${work.title}
+       </option>
+    `).join("");
   }
 
   function render() {
@@ -112,6 +144,8 @@
         </div>
       `;
     }).join("");
+    
+    renderWorkOptions();
   }
 
   render();
