@@ -2,11 +2,15 @@
 創ることを、少しずつ積み重ねる。創作活動の記録と振り返りのための、個人用Webアプリです。
 
 ## ReleaseLog
-- 2026-07-01 v0.1 Sunrise（記録できるようになった）
-- 2026-07-03 v0.2 Bloom（作品とログを分離）
+- 2026-07-01 v0.1 Sunrise
+  - 作品と文字数を記録できるようになった
+- 2026-07-03 v0.2 Bloom
   - 作品とログを分離
   - HTML/CSS/JavaScriptを分離
   - localStorageの構造を変更
+- 2026-07-04 v0.3 Notebook
+  - 作品選択UI追加
+  - 無題作品の作成を防止
 
 ## 現在の機能
 - 創作ログ登録
@@ -19,3 +23,6 @@
 - 編集機能
 - 月別表示
 - CSVエクスポート
+- 
+## Development
+Commit messages follow Conventional Commits.
