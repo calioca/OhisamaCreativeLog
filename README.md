@@ -4,6 +4,9 @@
 ## ReleaseLog
 - 2026-07-01 v0.1 Sunrise（記録できるようになった）
 - 2026-07-03 v0.2 Bloom（作品とログを分離）
+  - 作品とログを分離
+  - HTML/CSS/JavaScriptを分離
+  - localStorageの構造を変更
 
 ## 現在の機能
 - 創作ログ登録
