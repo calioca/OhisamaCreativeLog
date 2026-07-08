@@ -53,14 +53,22 @@ function addLog() {
   let work;
 
   if (newTitle) {
-    work = {
-      id: Date.now(),
-      title: newTitle,
-      platform: platform,
-      createdAt: document.getElementById("date").value
-    };
-    works.push(work);
-    saveWorks(works);
+  work = works.find(w =>
+    w.title === newTitle &&
+    w.platform === platform
+  );
+
+  if (!work) {
+      work = {
+        id: Date.now(),
+        title: newTitle,
+        platform: platform,
+        createdAt: document.getElementById("date").value
+      };
+
+      works.push(work);
+      saveWorks(works);
+    }
   } else {
     work = works.find(w => String(w.id) === selectedWorkId);
   }
