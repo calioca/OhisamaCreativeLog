@@ -44,6 +44,8 @@ input[type="date"] {
   display: block;
   appearance: none;
   -webkit-appearance: none;
+  color: #595651;
+  background-color: #fff;
 }
 
 textarea {
