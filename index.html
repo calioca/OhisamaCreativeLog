@@ -10,7 +10,9 @@
   <div class="app">
     <h1>☀️ Sunny Creative Log</h1>
     <p>創ることを、少しずつ積み重ねる。</p>
-
+    
+    <div class="summary" id="summary"></div>
+    
     <label>日付</label>
     <input type="date" id="date" />
 
@@ -53,8 +55,6 @@
       <button onclick="updateWorkTitle()">作品名を更新する</button>
       <button class="delete-btn" onclick="deleteSelectedWorkIfEmpty()">ログのない作品を削除する</button>
     </div>
-
-    <div class="summary" id="summary"></div>
 
     <h2>ログ一覧</h2>
     <div id="logs"></div>
