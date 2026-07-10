@@ -324,7 +324,7 @@ function editLog(id) {
     return;
   }
 
-  const Ωωwork = works.find(work => work.id === log.workId);
+  const work = works.find(work => work.id === log.workId);
 
   if (!work) {
     alert("創作ログに対応する作品が見つかりません。");
