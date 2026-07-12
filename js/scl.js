@@ -356,6 +356,21 @@ function editLog(id) {
 }
 
 // ========================================
+// 作品詳細
+// ========================================
+/* 選択中の作品の詳細を表示する */
+function showSelectedWorkDetail() {
+  const selectedWorkId = document.getElementById("workSelect").value;
+
+  if (!selectedWorkId) {
+    alert("作品を選択してください。");
+    return;
+  }
+
+  showWorkDetail(Number(selectedWorkId));
+}
+
+// ========================================
 // 画面表示
 // ========================================
 
@@ -366,6 +381,42 @@ function cancelLogEdit() {
   dateInput.value = getLocalDateString();
 
   renderWorkOptions();
+}
+
+/* 指定したIDの作品詳細を表示する */
+function showWorkDetail(workId) {
+  const works = getWorks();
+
+  const work = works.find(
+    work => String(work.id) === String(workId)
+  );
+
+  if (!work) {
+    alert("作品が見つかりません。");
+    return;
+  }
+
+  document.getElementById("workDetailTitle").textContent = work.title;
+  document.getElementById("workDetailPlatform").textContent = work.platform;
+
+  document.getElementById("mainView").hidden = true;
+  document.getElementById("workDetailView").hidden = false;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+/* 作品詳細を閉じてメイン画面へ戻す */
+function hideWorkDetail() {
+  document.getElementById("workDetailView").hidden = true;
+  document.getElementById("mainView").hidden = false;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 // ========================================

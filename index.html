@@ -8,65 +8,93 @@
 </head>
 <body>
   <div class="app">
-    <h1>☀️ Sunny Creative Log</h1>
-    <p>創ることを、少しずつ積み重ねる。</p>
+  
+    <header class="app-headeer">
+      <h1>☀️ Sunny Creative Log</h1>
+      <p>創ることを、少しずつ積み重ねる。</p>
+    </header>
     
-    <div class="summary" id="summary"></div>
-    
-    <label>日付</label>
-    <input type="date" id="date" />
+    <div id="mainView">       
+       <div class="summary" id="summary"></div>
+       
+       <label>日付</label>
+       <input type="date" id="date" />
 
-    <label>種別</label>
-    <select id="platform">
-      <option value="note">note</option>
-      <option value="しずかなインターネット">しずかなインターネット</option>
-      <option value="その他">その他</option>
-    </select>
+       <label>種別</label>
+       <select id="platform">
+         <option value="note">note</option>
+         <option value="しずかなインターネット">しずかなインターネット</option>
+         <option value="その他">その他</option>
+       </select>
 
-    <label>作品を選択</label>
-    <select id="workSelect"></select>
-    
-    <label>新しい作品名</label>
-    <input type="text" id="newTitle" placeholder="新しい作品の場合だけ入力" />
+       <label>作品を選択</label>
+       <select id="workSelect"></select>
+       <div class="work-detail-button">
+         <button
+           type="button"
+           class="secondary-btn"
+           onclick="showSelectedWorkDetail()"
+         >
+           作品詳細を見る
+         </button>
+       </div>
+       
+       <label>新しい作品名</label>
+       <input type="text" id="newTitle" placeholder="新しい作品の場合だけ入力" />
 
-    <label>作業</label>
-    <select id="workType">
-      <option value="新規">新規</option>
-      <option value="続き">続き</option>
-      <option value="推敲">推敲</option>
-      <option value="構成">構成</option>
-      <option value="公開">公開</option>
-    </select>
+       <label>作業</label>
+       <select id="workType">
+         <option value="新規">新規</option>
+         <option value="続き">続き</option>
+         <option value="推敲">推敲</option>
+         <option value="構成">構成</option>
+         <option value="公開">公開</option>
+       </select>
 
-    <label>文字数</label>
-    <input type="number" id="chars" placeholder="空欄でもOK" />
+       <label>文字数</label>
+       <input type="number" id="chars" placeholder="空欄でもOK" />
 
-    <label>メモ</label>
-    <textarea id="memo" placeholder="例：コメダで書き上げた"></textarea>
+       <label>メモ</label>
+       <textarea id="memo" placeholder="例：コメダで書き上げた"></textarea>
 
-    <button id="saveLogButton" onclick="saveLog()">記録する</button>
+       <button id="saveLogButton" onclick="saveLog()">記録する</button>
 
-    <button
-      id="cancelEditButton"
-      class="delete-btn"
-      onclick="cancelLogEdit()"
-      hidden
-    >
-      編集をキャンセル
-    </button>
-    
-    <div class="work-actions">
-      <h2>作品管理</h2>
+       <button
+         id="cancelEditButton"
+         class="delete-btn"
+         onclick="cancelLogEdit()"
+         hidden
+       >
+         編集をキャンセル
+       </button>
+       
+       <div class="work-actions">
+         <h2>作品管理</h2>
 
-      <label>選択中の作品名を編集</label>
-      <input type="text" id="editWorkTitle" placeholder="作品名を変更する場合に入力" />
+         <label>選択中の作品名を編集</label>
+         <input type="text" id="editWorkTitle" placeholder="作品名を変更する場合に入力" />
 
-      <button onclick="updateWorkTitle()">作品名を更新する</button>
-      <button class="delete-btn" onclick="deleteSelectedWorkIfEmpty()">ログのない作品を削除する</button>
-    </div>
+         <button onclick="updateWorkTitle()">作品名を更新する</button>
+         <button class="delete-btn" onclick="deleteSelectedWorkIfEmpty()">ログのない作品を削除する</button>
+       </div>
 
-    <h2>ログ一覧</h2>
-    <div id="logs"></div>
+       <h2>ログ一覧</h2>
+       <div id="logs"></div>
+     </div>
+     <section id="workDetailView" class="work-detail" hidden>
+       <button
+         type="button"
+         class="secondary-btn"
+         onclick="hideWorkDetail()"
+       >
+         ← 戻る
+       </button>
+
+       <h2>作品詳細</h2>
+
+       <p class="work-detail-platform" id="workDetailPlatform"></p>
+       <h3 id="workDetailTitle"></h3>
+     </section>
   </div>
   <script src="js/scl.js" charset="utf-8"></script>
 </body>
