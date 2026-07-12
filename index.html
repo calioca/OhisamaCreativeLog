@@ -90,10 +90,20 @@
          ← 戻る
        </button>
 
-       <h2>作品詳細</h2>
+       <h2 id="workDetailTitle"></h2>
+       <p id="workDetailPlatform" class="work-detail-platform"></p>
 
-       <p class="work-detail-platform" id="workDetailPlatform"></p>
-       <h3 id="workDetailTitle"></h3>
+       <div class="work-detail-summary">
+         <div>
+           <strong id="workDetailTotalChars">0文字</strong>
+         </div>
+         <div>
+           <strong id="workDetailLogCount">0ログ</strong>
+         </div>
+       </div>
+
+       <h3 class="work-detail-subtitle">ログ一覧</h3>
+       <div id="workDetailLogs"></div>
      </section>
   </div>
   <script src="js/scl.js" charset="utf-8"></script>

@@ -395,6 +395,23 @@ function showWorkDetail(workId) {
     alert("作品が見つかりません。");
     return;
   }
+  
+  const logs = getLogs();
+
+  const workLogs = logs.filter(
+    log => String(log.workId) === String(work.id)
+  );
+
+  const totalChars = workLogs.reduce(
+    (sum, log) => sum + (Number(log.chars) || 0),
+    0
+  );
+
+  document.getElementById("workDetailTotalChars").textContent =
+    `${totalChars.toLocaleString()}文字`;
+
+  document.getElementById("workDetailLogCount").textContent =
+  `${workLogs.length}ログ`;
 
   document.getElementById("workDetailTitle").textContent = work.title;
   document.getElementById("workDetailPlatform").textContent = work.platform;
