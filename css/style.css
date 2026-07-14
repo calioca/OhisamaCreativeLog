@@ -163,7 +163,7 @@ button:hover{
 }
 
 .work-detail {
-  padding: 24px;
+  padding: 12px 24px 24px;
 }
 
 .work-detail h2 {
@@ -184,7 +184,7 @@ button:hover{
 
 .work-detail-summary {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin: 18px 0;
   padding: 16px;
   border: 1px solid #f2d878;
@@ -241,4 +241,5 @@ button:hover{
 .secondary-btn {
   width: auto;
   padding: 8px 14px;
+  margin-top: 0px;
 }
