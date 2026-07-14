@@ -427,10 +427,10 @@ function showWorkDetail(workId) {
   );
 
   document.getElementById("workDetailTotalChars").textContent =
-    `${totalChars.toLocaleString()}文字`;
+  totalChars.toLocaleString();
 
   document.getElementById("workDetailLogCount").textContent =
-  `${workLogs.length}ログ`;
+  workLogs.length;
 
   document.getElementById("workDetailTitle").textContent = work.title;
   document.getElementById("workDetailPlatform").textContent = work.platform;

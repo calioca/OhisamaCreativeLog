@@ -167,7 +167,7 @@ button:hover{
 }
 
 .work-detail h2 {
-  margin-top: 20px;
+  margin-top: 18px;
   margin-bottom: 8px;
 }
 
@@ -184,24 +184,40 @@ button:hover{
 
 .work-detail-summary {
   display: flex;
-  gap: 24px;
-  margin: 24px 0;
+  justify-content: space-around;
+  margin: 18px 0;
   padding: 16px;
-  background: #fffaf0;
-  border-radius: 14px;
+  border: 1px solid #f2d878;
+  border-radius: 16px;
+  background: #fff;
 }
 
-.work-detail-summary strong {
-  font-size: 1.2rem;
+.summary-item {
+  text-align: center;
+}
+
+.summary-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.summary-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #7a756d;
 }
 
 .work-detail-subtitle {
   margin-top: 24px;
+  margin-bottom: 8px;
   font-size: 1.1rem;
 }
 
 .work-detail-log {
-  padding: 16px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #eee3c8;
 }
 
@@ -210,7 +226,7 @@ button:hover{
 }
 
 .work-detail-log-meta {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #7a756d;
 }
 
