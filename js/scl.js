@@ -255,7 +255,7 @@ function render() {
     0
   );
   
-  const workCount = new Set(
+  const touchedWorkCount = new Set(
     todayLogs.map(log => log.workId)
   ).size;
 
@@ -273,13 +273,13 @@ function render() {
     })
     .reduce((sum, log) => sum + log.chars, 0);
 
-  document.getElementById("todayWorkCount").textContent = workCount;
+  document.getElementById("todayWorkCount").textContent = touchedWorkCount;
 
   document.getElementById("todayCharCount").textContent =
     todayTotal.toLocaleString();
 
   document.getElementById("todayWorkCount").textContent =
-    workCount;
+    touchedWorkCount;
 
   document.getElementById("todayCharCount").textContent =
     todayTotal.toLocaleString();
@@ -387,6 +387,33 @@ function showSelectedWorkDetail() {
   }
 
   showWorkDetail(Number(selectedWorkId));
+}
+
+// ========================================
+// 集計
+// ========================================
+/* 指定した月の創作ログを集計する */
+function getMonthlySummary(month) {
+  const logs = getLogs();
+
+  const monthlyLogs = logs.filter(log =>
+    log.date.startsWith(month)
+  );
+
+  const totalChars = monthlyLogs.reduce(
+    (sum, log) => sum + (Number(log.chars) || 0),
+    0
+  );
+
+  const touchedWorkCount = new Set(
+    monthlyLogs.map(log => String(log.workId))
+  ).size;
+
+  return {
+    totalChars,
+    touchedWorkCount,
+    logCount: monthlyLogs.length
+  };
 }
 
 // ========================================
