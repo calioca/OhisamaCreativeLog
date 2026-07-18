@@ -277,11 +277,6 @@ function render() {
 
   const todayTotal = todayLogs.reduce((sum, log) => sum + log.chars, 0);
   
-  const totalChars = todayLogs.reduce(
-    (sum, log) => sum + Number(log.chars),
-    0
-  );
-  
   const touchedWorkCount = new Set(
     todayLogs.map(log => log.workId)
   ).size;
@@ -299,11 +294,6 @@ function render() {
       return work && work.platform === "しずかなインターネット";
     })
     .reduce((sum, log) => sum + log.chars, 0);
-
-  document.getElementById("todayWorkCount").textContent = touchedWorkCount;
-
-  document.getElementById("todayCharCount").textContent =
-    todayTotal.toLocaleString();
 
   document.getElementById("todayWorkCount").textContent =
     touchedWorkCount;
