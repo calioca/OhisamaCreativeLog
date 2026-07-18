@@ -67,6 +67,13 @@ function sortLogsByNewest(logs) {
   });
 }
 
+/* 作品を新しい順に並び替える */
+function sortWorksByNewest(works) {
+  return [...works].sort(
+    (a, b) => Number(b.id) - Number(a.id)
+  );
+}
+
 // ========================================
 // 集計
 // ========================================
@@ -359,9 +366,9 @@ function renderWorkOptions() {
 
   if (!workSelect) return;
 
-  const filteredWorks = works
-    .filter(work => work.platform === selectedPlatform)
-    .sort((a, b) => Number(b.id) - Number(a.id));
+  const filteredWorks = sortWorksByNewest(
+    works.filter(work => work.platform === selectedPlatform)
+  );
 
   if (filteredWorks.length === 0) {
     workSelect.innerHTML =
