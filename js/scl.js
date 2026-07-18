@@ -409,6 +409,17 @@ function renderTodaySummary(works, logs) {
       (sum, log) => sum + Number(log.chars),
       0
     );
+    
+  const otherTotal = todayLogs
+    .filter(log => {
+      const work = works.find(w => w.id === log.workId);
+      return work &&
+        work.platform === "その他";
+    })
+    .reduce(
+      (sum, log) => sum + Number(log.chars),
+      0
+    );
 
   document.getElementById("todayWorkCount").textContent =
     touchedWorkCount;
@@ -421,6 +432,10 @@ function renderTodaySummary(works, logs) {
 
   document.getElementById("todayShizukanaChars").textContent =
     shizukanaTotal.toLocaleString();
+
+  document.getElementById("todayOtherChars").textContent =
+    otherTotal.toLocaleString();
+    
 }
 
 /* 創作ログ一覧を新しい順に表示する */
