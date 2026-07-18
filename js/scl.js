@@ -45,6 +45,26 @@ function saveLogs(logs) {
   localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
 }
 
+// ========================================
+// 並び替え
+// ========================================
+/* 創作ログを新しい順（日付→登録日時）に並び替える */
+function sortLogsByNewest(logs) {
+  return [...logs].sort((a, b) => {
+    // ① 日付が違う場合
+    if (a.date !== b.date) {
+      return b.date.localeCompare(a.date);
+    }
+
+    // ② createdAtが両方ある場合
+    if (a.createdAt && b.createdAt) {
+      return b.createdAt.localeCompare(a.createdAt);
+    }
+
+    // ③ それ以外は現在の順番を維持
+    return 0;
+  });
+}
 
 // ========================================
 // 創作ログ
@@ -250,9 +270,10 @@ function deleteSelectedWorkIfEmpty() {
 /* 保存されているデータをもとに画面全体を更新する */
 function render() {
   const works = getWorks();
-  const logs = getLogs().sort((a, b) => b.date.localeCompare(a.date));
+  const logs = getLogs();
+  const sortedLogs = sortLogsByNewest(logs);
 
-  const todayLogs = logs.filter(log => log.date === today);
+  const todayLogs = sortedLogs.filter(log => log.date === today);
 
   const todayTotal = todayLogs.reduce((sum, log) => sum + log.chars, 0);
   
@@ -296,7 +317,7 @@ function render() {
   document.getElementById("todayShizukanaChars").textContent =
     shizukanaTotal.toLocaleString();
 
-  document.getElementById("logs").innerHTML = logs.map(log => {
+  document.getElementById("logs").innerHTML = sortedLogs.map(log => {
     const work = works.find(w => w.id === log.workId);
 
     const title = work ? work.title : "不明な作品";
@@ -453,9 +474,7 @@ function showWorkDetail(workId) {
   const workLogs = logs.filter(
     log => String(log.workId) === String(work.id)
   );
-  const sortedWorkLogs = [...workLogs].sort(
-    (a, b) => b.date.localeCompare(a.date)
-  );
+  const sortedWorkLogs = sortLogsByNewest(workLogs);
 
   const workDetailLogs = document.getElementById("workDetailLogs");
 
