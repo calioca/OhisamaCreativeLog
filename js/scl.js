@@ -48,6 +48,7 @@ function saveLogs(logs) {
 // ========================================
 // 並び替え
 // ========================================
+
 /* 創作ログを新しい順（日付→登録日時）に並び替える */
 function sortLogsByNewest(logs) {
   return [...logs].sort((a, b) => {
@@ -64,6 +65,34 @@ function sortLogsByNewest(logs) {
     // ③ それ以外は現在の順番を維持
     return 0;
   });
+}
+
+// ========================================
+// 集計
+// ========================================
+
+/* 指定した月の創作ログを集計する */
+function getMonthlySummary(month) {
+  const logs = getLogs();
+
+  const monthlyLogs = logs.filter(log =>
+    log.date.startsWith(month)
+  );
+
+  const totalChars = monthlyLogs.reduce(
+    (sum, log) => sum + (Number(log.chars) || 0),
+    0
+  );
+
+  const touchedWorkCount = new Set(
+    monthlyLogs.map(log => String(log.workId))
+  ).size;
+
+  return {
+    totalChars,
+    touchedWorkCount,
+    logCount: monthlyLogs.length
+  };
 }
 
 // ========================================
@@ -159,34 +188,74 @@ function deleteLog(id) {
   render();
 }
 
-// ========================================
-// 作品管理
-// ========================================
-
-/* 選択中の種別に対応する作品を、新しい順で選択欄に表示する */
-function renderWorkOptions() {
+/* 指定したIDの創作ログを編集できる状態にする */
+function editLog(id) {
+  const logs = getLogs();
   const works = getWorks();
-  const workSelect = document.getElementById("workSelect");
-  const selectedPlatform = document.getElementById("platform").value;
 
-  if (!workSelect) return;
+  const log = logs.find(log => log.id === id);
 
-  const filteredWorks = works
-    .filter(work => work.platform === selectedPlatform)
-    .sort((a, b) => Number(b.id) - Number(a.id));
-
-  if (filteredWorks.length === 0) {
-    workSelect.innerHTML =
-      `<option value="">この種別の作品はまだありません</option>`;
+  if (!log) {
+    alert("編集する創作ログが見つかりません。");
     return;
   }
 
-  workSelect.innerHTML = filteredWorks.map(work => `
-    <option value="${work.id}">
-      ${work.title}
-    </option>
-  `).join("");
+  const work = works.find(work => work.id === log.workId);
+
+  if (!work) {
+    alert("創作ログに対応する作品が見つかりません。");
+    return;
+  }
+
+  editingLogId = id;
+
+  document.getElementById("date").value = log.date;
+  document.getElementById("platform").value = work.platform;
+
+  renderWorkOptions();
+
+  document.getElementById("workSelect").value = String(work.id);
+  document.getElementById("workType").value = log.workType;
+  document.getElementById("chars").value = log.chars;
+  document.getElementById("memo").value = log.memo;
+
+  document.getElementById("newTitle").value = "";
+  document.getElementById("newTitle").disabled = true;
+
+  document.getElementById("saveLogButton").textContent = "更新する";
+  document.getElementById("cancelEditButton").hidden = false;
+
+  document.getElementById("date").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
+
+/* 編集モードを終了し、新規入力モードに戻す */
+function cancelLogEdit() {
+  resetLogForm();
+
+  dateInput.value = getLocalDateString();
+
+  renderWorkOptions();
+}
+
+/* 創作ログ入力フォームを初期状態に戻す */
+function resetLogForm() {
+  editingLogId = null;
+
+  document.getElementById("newTitle").value = "";
+  document.getElementById("chars").value = "";
+  document.getElementById("memo").value = "";
+
+  document.getElementById("saveLogButton").textContent = "記録する";
+  document.getElementById("cancelEditButton").hidden = true;
+  document.getElementById("newTitle").disabled = false;
+}
+
+// ========================================
+// 作品管理
+// ========================================
 
 /* 作品名を更新する */
 function updateWorkTitle() {
@@ -267,6 +336,11 @@ function deleteSelectedWorkIfEmpty() {
   render();
 }
 
+
+// ========================================
+// 画面表示
+// ========================================
+
 /* 保存されているデータをもとに画面全体を更新する */
 function render() {
   const works = getWorks();
@@ -277,60 +351,29 @@ function render() {
   renderWorkOptions();
 }
 
-/* 創作ログ入力フォームを初期状態に戻す */
-function resetLogForm() {
-  editingLogId = null;
-
-  document.getElementById("newTitle").value = "";
-  document.getElementById("chars").value = "";
-  document.getElementById("memo").value = "";
-
-  document.getElementById("saveLogButton").textContent = "記録する";
-  document.getElementById("cancelEditButton").hidden = true;
-  document.getElementById("newTitle").disabled = false;
-}
-
-/* 指定したIDの創作ログを編集できる状態にする */
-function editLog(id) {
-  const logs = getLogs();
+/* 選択中の種別に対応する作品を、新しい順で選択欄に表示する */
+function renderWorkOptions() {
   const works = getWorks();
+  const workSelect = document.getElementById("workSelect");
+  const selectedPlatform = document.getElementById("platform").value;
 
-  const log = logs.find(log => log.id === id);
+  if (!workSelect) return;
 
-  if (!log) {
-    alert("編集する創作ログが見つかりません。");
+  const filteredWorks = works
+    .filter(work => work.platform === selectedPlatform)
+    .sort((a, b) => Number(b.id) - Number(a.id));
+
+  if (filteredWorks.length === 0) {
+    workSelect.innerHTML =
+      `<option value="">この種別の作品はまだありません</option>`;
     return;
   }
 
-  const work = works.find(work => work.id === log.workId);
-
-  if (!work) {
-    alert("創作ログに対応する作品が見つかりません。");
-    return;
-  }
-
-  editingLogId = id;
-
-  document.getElementById("date").value = log.date;
-  document.getElementById("platform").value = work.platform;
-
-  renderWorkOptions();
-
-  document.getElementById("workSelect").value = String(work.id);
-  document.getElementById("workType").value = log.workType;
-  document.getElementById("chars").value = log.chars;
-  document.getElementById("memo").value = log.memo;
-
-  document.getElementById("newTitle").value = "";
-  document.getElementById("newTitle").disabled = true;
-
-  document.getElementById("saveLogButton").textContent = "更新する";
-  document.getElementById("cancelEditButton").hidden = false;
-
-  document.getElementById("date").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  workSelect.innerHTML = filteredWorks.map(work => `
+    <option value="${work.id}">
+      ${work.title}
+    </option>
+  `).join("");
 }
 
 /* 今日の創作の集計結果を表示する */
@@ -413,6 +456,7 @@ function renderLogList(works, logs) {
 // ========================================
 // 作品詳細
 // ========================================
+
 /* 選択中の作品の詳細を表示する */
 function showSelectedWorkDetail() {
   const selectedWorkId = document.getElementById("workSelect").value;
@@ -423,46 +467,6 @@ function showSelectedWorkDetail() {
   }
 
   showWorkDetail(Number(selectedWorkId));
-}
-
-// ========================================
-// 集計
-// ========================================
-/* 指定した月の創作ログを集計する */
-function getMonthlySummary(month) {
-  const logs = getLogs();
-
-  const monthlyLogs = logs.filter(log =>
-    log.date.startsWith(month)
-  );
-
-  const totalChars = monthlyLogs.reduce(
-    (sum, log) => sum + (Number(log.chars) || 0),
-    0
-  );
-
-  const touchedWorkCount = new Set(
-    monthlyLogs.map(log => String(log.workId))
-  ).size;
-
-  return {
-    totalChars,
-    touchedWorkCount,
-    logCount: monthlyLogs.length
-  };
-}
-
-// ========================================
-// 画面表示
-// ========================================
-
-/* 編集モードを終了し、新規入力モードに戻す */
-function cancelLogEdit() {
-  resetLogForm();
-
-  dateInput.value = getLocalDateString();
-
-  renderWorkOptions();
 }
 
 /* 指定したIDの作品詳細を表示する */
@@ -534,6 +538,7 @@ function hideWorkDetail() {
     behavior: "smooth"
   });
 }
+
 
 // ========================================
 // 初期化
