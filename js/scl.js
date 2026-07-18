@@ -271,35 +271,9 @@ function deleteSelectedWorkIfEmpty() {
 function render() {
   const works = getWorks();
   const logs = getLogs();
-  const sortedLogs = sortLogsByNewest(logs);
 
   renderTodaySummary(works, logs);
-
-  document.getElementById("logs").innerHTML = sortedLogs.map(log => {
-    const work = works.find(w => w.id === log.workId);
-
-    const title = work ? work.title : "不明な作品";
-    const platform = work ? work.platform : "不明";
-
-    return `
-      <div class="log">
-        <div class="log-title">${title}</div>
-        <div class="log-meta">
-          ${log.date} / ${platform} / ${log.workType} / ${log.chars}字
-        </div>
-        ${log.memo ? `<p>${log.memo}</p>` : ""}
-        <div class="log-actions">
-          <button class="edit-btn" onclick="editLog(${log.id})">
-            編集
-          </button>
-          <button class="delete-btn" onclick="deleteLog(${log.id})">
-            削除
-          </button>
-        </div>
-      </div>
-    `;
-  }).join("");
-  
+  renderLogList(works, logs);  
   renderWorkOptions();
 }
 
@@ -404,6 +378,36 @@ function renderTodaySummary(works, logs) {
 
   document.getElementById("todayShizukanaChars").textContent =
     shizukanaTotal.toLocaleString();
+}
+
+/* 創作ログ一覧を新しい順に表示する */
+function renderLogList(works, logs) {
+  const sortedLogs = sortLogsByNewest(logs);
+
+  document.getElementById("logs").innerHTML = sortedLogs.map(log => {
+    const work = works.find(w => w.id === log.workId);
+
+    const title = work ? work.title : "不明な作品";
+    const platform = work ? work.platform : "不明";
+
+    return `
+      <div class="log">
+        <div class="log-title">${title}</div>
+        <div class="log-meta">
+          ${log.date} / ${platform} / ${log.workType} / ${log.chars}字
+        </div>
+        ${log.memo ? `<p>${log.memo}</p>` : ""}
+        <div class="log-actions">
+          <button class="edit-btn" onclick="editLog(${log.id})">
+            編集
+          </button>
+          <button class="delete-btn" onclick="deleteLog(${log.id})">
+            削除
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 // ========================================
