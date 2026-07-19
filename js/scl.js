@@ -338,53 +338,11 @@ function removeWorkIfNoLogs(workId, logs) {
   }
 
   const works = getWorks();
-
   const updatedWorks = works.filter(
     work => String(work.id) !== String(workId)
   );
 
   saveWorks(updatedWorks);
-}
-
-/* 創作ログのない作品を削除する */
-function deleteSelectedWorkIfEmpty() {
-  const selectedWorkId =
-    document.getElementById("workSelect").value;
-
-  if (!selectedWorkId) {
-    alert("作品を選択してください。");
-    return;
-  }
-
-  const logs = getLogs();
-
-  if (workHasLogs(selectedWorkId, logs)) {
-    alert("創作ログがある作品は削除できません。");
-    return;
-  }
-
-  const works = getWorks();
-  const work = works.find(
-    work => String(work.id) === String(selectedWorkId)
-  );
-
-  if (!work) {
-    alert("作品が見つかりません。");
-    return;
-  }
-
-  const confirmed =
-    confirm(`「${work.title}」を削除しますか？`);
-
-  if (!confirmed) {
-    return;
-  }
-
-  removeWorkIfNoLogs(selectedWorkId, logs);
-
-  document.getElementById("editWorkTitle").value = "";
-
-  render();
 }
 
 // ========================================
