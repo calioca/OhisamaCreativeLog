@@ -116,6 +116,16 @@ button:hover{
   margin-top: 10px;
 }
 
+.monthly-summary {
+  margin-top: 16px;
+}
+
+.monthly-summary-main {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 12px;
+}
+
 /* ========================================
    ログ一覧
 ======================================== */

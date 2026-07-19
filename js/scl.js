@@ -354,6 +354,7 @@ function render() {
   const logs = getLogs();
 
   renderTodaySummary(works, logs);
+  renderMonthlySummary();
   renderLogList(works, logs);  
   renderWorkOptions();
 }
@@ -473,6 +474,26 @@ function renderLogList(works, logs) {
       </div>
     `;
   }).join("");
+}
+
+/* 今月の創作の集計結果を表示する */
+function renderMonthlySummary() {
+  const currentMonth = getLocalDateString().slice(0, 7);
+
+  const {
+    totalChars,
+    touchedWorkCount,
+    logCount
+  } = getMonthlySummary(currentMonth);
+
+  document.getElementById("monthlyTouchedWorkCount").textContent =
+    touchedWorkCount;
+
+  document.getElementById("monthlyCharCount").textContent =
+    totalChars.toLocaleString();
+
+  document.getElementById("monthlyLogCount").textContent =
+    logCount;
 }
 
 // ========================================
