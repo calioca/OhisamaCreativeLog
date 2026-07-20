@@ -1,4 +1,4 @@
-# ☀️ Sunny Creative Log
+# ☀️ Ohisama Creative Log
 
 創作の「今日」と「積み重ね」を記録する、シンプルな創作ログアプリです。
 
