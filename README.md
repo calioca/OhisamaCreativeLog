@@ -4,7 +4,7 @@
 
 noteやしずかなインターネットなど、複数の創作活動を作品ごとに記録できます。
 
-GitHub Pages: 
+GitHub Pages: https://calioca.github.io/OhisamaCreativeLog/
 
 ---
 
@@ -30,7 +30,8 @@ GitHub Pages:
 
 ## スクリーンショット
 
-（後で追加）
+<img width="1211" height="1044" alt="スクリーンショット 2026-07-20 15 12 11" src="https://github.com/user-attachments/assets/65e83eda-95dd-4c64-8833-ae12e2c8c7b4" />
+
 
 ---
 
