@@ -5,6 +5,7 @@
 const WORKS_KEY = "oclWorks";
 const LOGS_KEY = "oclLogs";
 let editingLogId = null;
+let selectedLogMonth = null;
 
 const dateInput = document.getElementById("date");
 
@@ -20,6 +21,11 @@ function getLocalDateString() {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+/* 現在の年月を取得する */
+function getCurrentYearMonth() {
+  return getLocalDateString().slice(0, 7);
 }
 
 // ========================================
@@ -248,6 +254,9 @@ function saveLog() {
   }
 
   saveLogs(logs);
+
+  selectedLogMonth = log.date.slice(0, 7);
+
   resetLogForm();
   render();
 }
@@ -527,11 +536,10 @@ function renderTodaySummary(works, logs) {
 
 /* 創作ログ一覧を新しい順に表示する */
 function renderLogList(works, logs) {
-  const selectedMonth =
-    document.getElementById("logMonthFilter").value || "all";
+  const month = selectedLogMonth || "all";
 
   const filteredLogs =
-    filterLogsByMonth(logs, selectedMonth);
+    filterLogsByMonth(logs, month);
 
   const sortedLogs =
     sortLogsByNewest(filteredLogs);
@@ -627,7 +635,7 @@ function renderLogMonthOptions(logs) {
   const monthSelect =
     document.getElementById("logMonthFilter");
 
-  const selectedMonth = monthSelect.value || "all";
+  const currentMonth = getCurrentYearMonth();
   const months = getLogMonths(logs);
 
   monthSelect.innerHTML = `
@@ -640,11 +648,19 @@ function renderLogMonthOptions(logs) {
   `;
 
   const canKeepSelection =
-    selectedMonth === "all" || months.includes(selectedMonth);
+    selectedLogMonth === "all" ||
+    months.includes(selectedLogMonth);
 
-  monthSelect.value = canKeepSelection
-    ? selectedMonth
-    : months[0] || "all";
+  const defaultMonth =
+    months.includes(currentMonth)
+      ? currentMonth
+      : months[0] || "all";
+
+  selectedLogMonth = canKeepSelection
+    ? selectedLogMonth
+    : defaultMonth;
+
+  monthSelect.value = selectedLogMonth;
 }
 
 // ========================================
@@ -778,7 +794,8 @@ document.getElementById("platform").addEventListener(
 
 document.getElementById("logMonthFilter").addEventListener(
   "change",
-  () => {
+  event => {
+    selectedLogMonth = event.target.value;
     renderLogList(getWorks(), getLogs());
   }
 );
