@@ -123,6 +123,15 @@ function getWorkTotalChars(
     );
 }
 
+/* 創作ログに含まれる年月を新しい順で取得する */
+function getLogMonths(logs) {
+  return [...new Set(
+    logs
+      .map(log => log.date.slice(0, 7))
+      .filter(Boolean)
+  )].sort((a, b) => b.localeCompare(a));
+}
+
 
 // =======================================
 // 状態判定
@@ -421,10 +430,12 @@ function render() {
   const logs = getLogs();
 
   renderTodaySummary(works, logs);
-  renderLogList(works, logs);
-
+  renderMonthlySummary();
   renderWorkOptions();
   renderWorkCharPreview();
+
+  renderLogMonthOptions(logs);
+  renderLogList(works, logs);
 }
 
 /* 選択中の種別に対応する作品を、新しい順で選択欄に表示する */
@@ -516,10 +527,28 @@ function renderTodaySummary(works, logs) {
 
 /* 創作ログ一覧を新しい順に表示する */
 function renderLogList(works, logs) {
-  const sortedLogs = sortLogsByNewest(logs);
+  const selectedMonth =
+    document.getElementById("logMonthFilter").value || "all";
 
-  document.getElementById("logs").innerHTML = sortedLogs.map(log => {
-    const work = works.find(w => w.id === log.workId);
+  const filteredLogs =
+    filterLogsByMonth(logs, selectedMonth);
+
+  const sortedLogs =
+    sortLogsByNewest(filteredLogs);
+
+  const logsElement =
+    document.getElementById("logs");
+
+  if (sortedLogs.length === 0) {
+    logsElement.innerHTML =
+      `<p class="empty-message">この月のログはありません。</p>`;
+    return;
+  }
+
+  logsElement.innerHTML = sortedLogs.map(log => {
+    const work = works.find(
+      work => String(work.id) === String(log.workId)
+    );
 
     const title = work ? work.title : "不明な作品";
     const platform = work ? work.platform : "不明";
@@ -591,6 +620,31 @@ function renderWorkCharPreview() {
 
   document.getElementById("projectedWorkChars").textContent =
     projectedTotal.toLocaleString();
+}
+
+/* ログ一覧の月選択肢を表示する */
+function renderLogMonthOptions(logs) {
+  const monthSelect =
+    document.getElementById("logMonthFilter");
+
+  const selectedMonth = monthSelect.value || "all";
+  const months = getLogMonths(logs);
+
+  monthSelect.innerHTML = `
+    <option value="all">すべて</option>
+    ${months.map(month => `
+      <option value="${month}">
+        ${month.replace("-", "年")}月
+      </option>
+    `).join("")}
+  `;
+
+  const canKeepSelection =
+    selectedMonth === "all" || months.includes(selectedMonth);
+
+  monthSelect.value = canKeepSelection
+    ? selectedMonth
+    : months[0] || "all";
 }
 
 // ========================================
@@ -680,6 +734,17 @@ function hideWorkDetail() {
   });
 }
 
+/* 選択された月の創作ログを取得する */
+function filterLogsByMonth(logs, month) {
+  if (month === "all") {
+    return logs;
+  }
+
+  return logs.filter(log =>
+    log.date.startsWith(month)
+  );
+}
+
 
 // ========================================
 // 初期化
@@ -708,6 +773,13 @@ document.getElementById("platform").addEventListener(
   () => {
     renderWorkOptions();
     renderWorkCharPreview();
+  }
+);
+
+document.getElementById("logMonthFilter").addEventListener(
+  "change",
+  () => {
+    renderLogList(getWorks(), getLogs());
   }
 );
 
