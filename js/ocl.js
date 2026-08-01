@@ -103,6 +103,59 @@ function getMonthlySummary(month) {
   };
 }
 
+/* 指定した作品の合計文字数を取得する */
+function getWorkTotalChars(
+  workId,
+  logs = getLogs(),
+  excludedLogId = null
+) {
+  return logs
+    .filter(log =>
+      String(log.workId) === String(workId) &&
+      (
+        excludedLogId === null ||
+        String(log.id) !== String(excludedLogId)
+      )
+    )
+    .reduce(
+      (sum, log) => sum + (Number(log.chars) || 0),
+      0
+    );
+}
+
+// =======================================
+// 状態判定
+// ========================================
+/* 入力中の創作ログに対応する作品IDを取得する */
+function getSelectedWorkId() {
+  const works = getWorks();
+
+  const selectedWorkId =
+    document.getElementById("workSelect").value;
+
+  if (editingLogId !== null) {
+    return selectedWorkId || null;
+  }
+
+  const newTitle =
+    document.getElementById("newTitle").value.trim();
+
+  if (newTitle) {
+    const platform =
+      document.getElementById("platform").value;
+
+    const existingWork = works.find(work =>
+      work.title === newTitle &&
+      work.platform === platform
+    );
+
+    return existingWork ? existingWork.id : null;
+  }
+
+  return selectedWorkId || null;
+}
+
+
 // ========================================
 // 創作ログ
 // ========================================
@@ -255,6 +308,16 @@ function editLog(id) {
     behavior: "smooth",
     block: "start"
   });
+  
+  document.getElementById("saveLogButton").textContent = "更新する";
+  document.getElementById("cancelEditButton").hidden = false;
+
+  renderWorkCharPreview();
+
+  document.getElementById("date").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
 /* 編集モードを終了し、新規入力モードに戻す */
@@ -264,6 +327,7 @@ function cancelLogEdit() {
   dateInput.value = getLocalDateString();
 
   renderWorkOptions();
+  renderWorkCharPreview();
 }
 
 /* 創作ログ入力フォームを初期状態に戻す */
@@ -356,9 +420,10 @@ function render() {
   const logs = getLogs();
 
   renderTodaySummary(works, logs);
-  renderMonthlySummary();
-  renderLogList(works, logs);  
+  renderLogList(works, logs);
+
   renderWorkOptions();
+  renderWorkCharPreview();
 }
 
 /* 選択中の種別に対応する作品を、新しい順で選択欄に表示する */
@@ -498,6 +563,33 @@ function renderMonthlySummary() {
     logCount;
 }
 
+/* 入力後の作品合計文字数を表示する */
+function renderWorkCharPreview() {
+  const inputChars =
+    Number(document.getElementById("chars").value) || 0;
+
+  const workId = getSelectedWorkId();
+
+  const currentTotal = workId
+    ? getWorkTotalChars(
+        workId,
+        getLogs(),
+        editingLogId
+      )
+    : 0;
+
+  const projectedTotal = currentTotal + inputChars;
+
+  document.getElementById("currentWorkChars").textContent =
+    currentTotal.toLocaleString();
+
+  document.getElementById("inputCharsPreview").textContent =
+    inputChars.toLocaleString();
+
+  document.getElementById("projectedWorkChars").textContent =
+    projectedTotal.toLocaleString();
+}
+
 // ========================================
 // 作品詳細
 // ========================================
@@ -526,15 +618,18 @@ function showWorkDetail(workId) {
     alert("作品が見つかりません。");
     return;
   }
-  
+
   const logs = getLogs();
 
   const workLogs = logs.filter(
     log => String(log.workId) === String(work.id)
   );
-  const sortedWorkLogs = sortLogsByNewest(workLogs);
 
-  const workDetailLogs = document.getElementById("workDetailLogs");
+  const sortedWorkLogs = sortLogsByNewest(workLogs);
+  const totalChars = getWorkTotalChars(work.id, logs);
+
+  const workDetailLogs =
+    document.getElementById("workDetailLogs");
 
   if (sortedWorkLogs.length === 0) {
     workDetailLogs.innerHTML =
@@ -550,19 +645,17 @@ function showWorkDetail(workId) {
     `).join("");
   }
 
-  const totalChars = workLogs.reduce(
-    (sum, log) => sum + (Number(log.chars) || 0),
-    0
-  );
-
   document.getElementById("workDetailTotalChars").textContent =
-  totalChars.toLocaleString();
+    totalChars.toLocaleString();
 
   document.getElementById("workDetailLogCount").textContent =
-  workLogs.length;
+    workLogs.length;
 
-  document.getElementById("workDetailTitle").textContent = work.title;
-  document.getElementById("workDetailPlatform").textContent = work.platform;
+  document.getElementById("workDetailTitle").textContent =
+    work.title;
+
+  document.getElementById("workDetailPlatform").textContent =
+    work.platform;
 
   document.getElementById("mainView").hidden = true;
   document.getElementById("workDetailView").hidden = false;
@@ -592,8 +685,27 @@ function hideWorkDetail() {
 const today = getLocalDateString();
 dateInput.value = today;
 
-document.getElementById("platform").addEventListener(
-    "change",
-    renderWorkOptions
+document.getElementById("workSelect").addEventListener(
+  "change",
+  renderWorkCharPreview
 );
+
+document.getElementById("chars").addEventListener(
+  "input",
+  renderWorkCharPreview
+);
+
+document.getElementById("newTitle").addEventListener(
+  "input",
+  renderWorkCharPreview
+);
+
+document.getElementById("platform").addEventListener(
+  "change",
+  () => {
+    renderWorkOptions();
+    renderWorkCharPreview();
+  }
+);
+
 render();

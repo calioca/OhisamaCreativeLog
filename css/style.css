@@ -74,7 +74,7 @@ h1 {
 }
 
 /* ========================================
-   フォーム
+   入力フォーム
 ======================================== */
 input, 
 select,
@@ -102,6 +102,16 @@ input[type="date"] {
 
 textarea {
   min-height: 70px;
+}
+
+.work-char-preview {
+  margin-top: 8px;
+  color: #7a756d;
+  font-size: 0.9rem;
+}
+
+.work-char-preview strong {
+  color: #595651;
 }
 
 /* ========================================
