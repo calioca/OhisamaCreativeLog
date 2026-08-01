@@ -123,38 +123,39 @@ function getWorkTotalChars(
     );
 }
 
+
 // =======================================
 // 状態判定
 // ========================================
+
 /* 入力中の創作ログに対応する作品IDを取得する */
 function getSelectedWorkId() {
-  const works = getWorks();
-
   const selectedWorkId =
-    document.getElementById("workSelect").value;
+    document.getElementById("workSelect").value || null;
 
   if (editingLogId !== null) {
-    return selectedWorkId || null;
+    return selectedWorkId;
   }
 
   const newTitle =
     document.getElementById("newTitle").value.trim();
 
-  if (newTitle) {
-    const platform =
-      document.getElementById("platform").value;
-
-    const existingWork = works.find(work =>
-      work.title === newTitle &&
-      work.platform === platform
-    );
-
-    return existingWork ? existingWork.id : null;
+  if (!newTitle) {
+    return selectedWorkId;
   }
 
-  return selectedWorkId || null;
-}
+  const platform =
+    document.getElementById("platform").value;
 
+  const works = getWorks();
+
+  const existingWork = works.find(work =>
+    work.title === newTitle &&
+    work.platform === platform
+  );
+
+  return existingWork ? existingWork.id : null;
+}
 
 // ========================================
 // 創作ログ
@@ -570,13 +571,15 @@ function renderWorkCharPreview() {
 
   const workId = getSelectedWorkId();
 
+  const logs = getLogs();
+
   const currentTotal = workId
     ? getWorkTotalChars(
         workId,
-        getLogs(),
+        logs,
         editingLogId
       )
-    : 0;
+    : 0; 
 
   const projectedTotal = currentTotal + inputChars;
 
